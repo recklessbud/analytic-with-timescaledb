@@ -1,0 +1,8 @@
+#just like dependencies to use
+fastapi==0.116.1
+uvicorn
+gunicorn
+sqlmodel
+timescaledb
+pydantic
+sqlalchemy
