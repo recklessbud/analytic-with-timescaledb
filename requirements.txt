@@ -6,3 +6,4 @@ sqlmodel
 timescaledb
 pydantic
 sqlalchemy
+requests

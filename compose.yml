@@ -1,0 +1,24 @@
+services:
+  server:
+    image: build_analytic_api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - PORT=8003
+    env_file:
+      - .env
+    ports: 
+      - 8003:8003
+    command: uvicorn main:app --host 0.0.0.0 --port 8003 --reload
+    volumes:
+      - ./src:/code:rw
+    develop:
+      watch:
+        - action: rebuild
+          path: Dockerfile
+        - action: rebuild
+          path: requirements.txt
+        - action: rebuild
+          path: compose.yml
+  
