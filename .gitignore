@@ -3,3 +3,4 @@ __pycache__
 .env
 .qodo
 .early.coverage
+.env**

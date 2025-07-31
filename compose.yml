@@ -6,9 +6,8 @@ services:
       dockerfile: Dockerfile
     environment:
       - PORT=8003
-      - DATABASE_URL=postgresql+psycopg://time-user:time-password@db_service:5432/timescale
     env_file:
-      - .env
+      - .env.compose
     ports: 
       - 8003:8003
     command: uvicorn main:app --host 0.0.0.0 --port 8003 --reload
