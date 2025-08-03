@@ -29,8 +29,8 @@ services:
       - POSTGRES_USER=time-user
       - POSTGRES_PASSWORD=time-password
       - POSTGRES_DB=timescale
-    ports:
-      - 5432
+    ports: 
+      - 4000:5432
     volumes:
       - timescaledb_data:/var/lib/postgresql/data
 
