@@ -1,22 +1,34 @@
-from fastapi import APIRouter, Depends, HTTPException
-from .models import EventSchema, EventListSchema, EventCreateSchema, UpdateSchema, get_utc_now
+from fastapi import APIRouter, Depends, HTTPException, Query
+from .models import EventSchema, EventBucSchema, EventCreateSchema, UpdateSchema, get_utc_now
 from api.db.config import DATABASE_URL
 from api.db.session import get_session 
 from sqlmodel import Session, select
 from typing import List
+from timescaledb.hyperfunctions import time_bucket
+from pprint import pprint
+from datetime import datetime, timezone, timedelta
+from sqlalchemy import func, case
 
 router = APIRouter()
 
+DEFAULT_LOOKUP_PAGES = ['/api/events/about', '/api/events/contact', '/api/events/dashboard', '/api/events/pages', '/api/events/pricing', '/api/events/privacy', '/api/events/terms', "/api/events/404", "/api/events/500"]
 
-@router.get("/", response_model=EventListSchema)
-async def root(session: Session = Depends(get_session)):
-    query = select(EventSchema).order_by(EventSchema.id.desc())
-    results = session.exec(query).all() 
-    print(DATABASE_URL) 
-    return { 
-        "results": results,
-        "count": len(results) 
-        } 
+@router.get("/", response_model=List[EventBucSchema])
+async def root(
+    session: Session = Depends(get_session), 
+    duration: str = Query(default='1 day'),
+    pages: List = Query(default=None)
+    ):
+    bucket = time_bucket(duration, EventSchema.time)
+    lookup_pages = pages if isinstance(pages, list) and len(pages) > 0 else DEFAULT_LOOKUP_PAGES
+    query = (
+        select(bucket.label('bucket'), EventSchema.page.label('page'), func.count().label("count"))
+        .where(EventSchema.page.in_(lookup_pages))
+        .group_by(bucket, EventSchema.page)
+        .order_by(bucket, EventSchema.page)
+        )
+    results = session.exec(query).fetchall()
+    return results
 
 @router.post("/", response_model=EventSchema)
 async def send_data(payload: EventCreateSchema, session:Session = Depends(get_session)):

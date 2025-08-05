@@ -12,24 +12,35 @@ from timescaledb.utils import get_utc_now
 
 class EventSchema(TimescaleModel, table=True):
     page: str = Field(index=True)
-    description: Optional[str] = ''
-    # sensor_id: int
-    # value: float   
+    user_agent: Optional[str] = Field(default="", index=True)
+    ipAddress: Optional[str] = Field(default="", index=True)
+    referrer: Optional[str] = Field(default="", index=True)
+    duration: Optional[int] = Field(default=0)
+    sessionId: Optional[str] = Field(index=True) 
+
+
     __chunk_time_interval__='INTERVAL 1 day' 
     __drop_after__='INTERVAL 3 months'
-    # createdAt: datetime = Field(default_factory=get_utc_now, sa_type=sqlmodel.DateTime(timezone=True), nullable=False)
-    updatedAt: datetime = Field(default_factory= get_utc_now, sa_type=sqlmodel.DateTime(timezone=True), nullable=False)
-
+ 
 
 class EventListSchema(SQLModel):
     results: List[EventSchema]
     count: int
 
 
+class EventBucSchema(SQLModel):
+    bucket:datetime
+    page:str
+    count:int
+
 
 class EventCreateSchema(SQLModel):
-    page: str
-    description: str
+    page: str = Field(index=True)
+    user_agent: Optional[str] = Field(default="", index=True)
+    ipAddress: Optional[str] = Field(default="", index=True)
+    referrer: Optional[str] = Field(default="", index=True)
+    duration: Optional[int] = Field(default=0)
+    sessionId: Optional[str] = Field(index=True) 
 
 
 class UpdateSchema(SQLModel): 
