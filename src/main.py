@@ -7,8 +7,12 @@ from fastapi.middleware.cors import CORSMiddleware
 
 @asynccontextmanager 
 async def lifespan(app: FastAPI):
-    initialize_db()
+    try:
+        initialize_db()
+    except Exception as e:
+        print(f"Database initialization failed: {e}")
     yield
+
 
 app = FastAPI(lifespan=lifespan)
 app.add_middleware(  
@@ -19,11 +23,6 @@ app.add_middleware(
     allow_headers=["*"],  # Allow all headers)
     )
 app.include_router(events_router, prefix='/api/events')
-
-@app.get("/")
-def hello_world():
-    return {"message": "Hello Worldfbibksfs!"}
-
 
 
 @app.get("/healthz")
