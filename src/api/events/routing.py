@@ -1,20 +1,21 @@
 from fastapi import APIRouter, Depends, HTTPException
 from .models import EventSchema, EventListSchema, EventCreateSchema, UpdateSchema, get_utc_now
 from api.db.config import DATABASE_URL
-from api.db.session import get_session
+from api.db.session import get_session 
 from sqlmodel import Session, select
 from typing import List
 
 router = APIRouter()
 
+
 @router.get("/", response_model=EventListSchema)
 async def root(session: Session = Depends(get_session)):
     query = select(EventSchema).order_by(EventSchema.id.desc())
-    results = session.exec(query).all()
-    print(DATABASE_URL)
-    return {
+    results = session.exec(query).all() 
+    print(DATABASE_URL) 
+    return { 
         "results": results,
-        "count": len(results)   
+        "count": len(results) 
         } 
 
 @router.post("/", response_model=EventSchema)

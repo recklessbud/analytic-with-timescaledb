@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 
 
 
-@asynccontextmanager
+@asynccontextmanager 
 async def lifespan(app: FastAPI):
     initialize_db()
     yield
