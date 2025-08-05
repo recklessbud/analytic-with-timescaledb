@@ -25,6 +25,11 @@ app.add_middleware(
 app.include_router(events_router, prefix='/api/events')
 
 
+@app.get('/')
+def helloo():
+    return {
+        "results":"hello"}
+
 @app.get("/healthz")
 def health_check():
     return {"status": "ok!"}

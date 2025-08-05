@@ -19,8 +19,6 @@ services:
           path: requirements.txt
         - action: rebuild
           path: compose.yml
-    depends_on:
-      - db_service
 
   db_service:
     image: timescale/timescaledb:latest-pg15 
